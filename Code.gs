@@ -150,7 +150,7 @@ function getData(name, date) {
               }
             }
             total = cell.getValue();
-            if (text.split(" ")[1] != "harmon") {
+            if (text != "team harmon") {
               Logger.log(text + " " + total);
               var col = sheetsF.createTextFinder(day).findNext().getColumn();
               var row = sheetsF.createTextFinder(textO).findNext().getRow();
