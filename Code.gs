@@ -63,13 +63,13 @@ function getData(name, date) {
   const files = fldr.getFiles()
   while (files.hasNext()) {
     var file = files.next();
-    if (file.getName() == name){
+    if (file.getName() == name) {
       var url = file.getUrl();
       Logger.log(url);
       Logger.log(file.getName());
       break
     }
-   
+
   }
   // open spreadsheet with id
   var paulsSS = SpreadsheetApp.openByUrl(url);
@@ -96,31 +96,78 @@ function getData(name, date) {
     var sheetName = source[s].getName()
     // gets individual sheet in raw data spreadsheet by index in array
     var sheetR = paulsSS.getSheetByName(sheetName);
-
+    var total = "0"
     for (var i = 0; i < values.length; i++) {
       for (var j = 0; j < values[i].length; j++) {
         var textO = values[i][j].getText();
         text = textO.toString().toLowerCase();
-        if (sheetName.toLowerCase().startsWith(text.split(" ")[0], 0) && sheetName.toLowerCase().split(" ")[1] == text.split(" ")[1]) {
-          var tosearch = "Grand Total";
-          var tf = sheetR.createTextFinder(tosearch);
-          var cell = tf.findNext();
-          var total = cell.offset(0, 1).getValue();
-          var col = sheetsF.createTextFinder(day).findNext().getColumn();
-          var row = sheetsF.createTextFinder(textO).findNext().getRow();
-          var curr = sheetsF.setCurrentCell(sheetsF.getRange(row, col));
-          curr.setValue(total);
-        }
+        if (text.split(" ")[0] == "team") {
+          if (sheetName.toLowerCase().split(" ")[1] == text.split(" ")[1]) {
+            Logger.log(sheetR.getName() + " = " + text);
+            var tosearch = "Grand Total";
+            var tf = sheetR.createTextFinder(tosearch);
+            var cell = tf.findNext();
 
+            if (cell == null) {
+              Logger.log("cell == null ??");
+              total = sheetsF.setCurrentCell(sheetsF.getRange('Y3')).getValue();
+            } else {
+              cell = cell.offset(0, 1);
+              if (cell.getBackground() == '#ff0000') {
+                total = cell.getValue();
+              } else {
+                while (cell.getBackground() != '#92d050') {
+                  cell = cell.offset(1, 0);
+                }
+              }
+            }
+            total = cell.getValue();
+            if (text.split(" ")[1] != "harmon") {
+              Logger.log(text + " " + total);
+              var col = sheetsF.createTextFinder(day).findNext().getColumn();
+              var row = sheetsF.createTextFinder(textO).findNext().getRow();
+              var curr = sheetsF.setCurrentCell(sheetsF.getRange(row, col));
+              curr.setValue(total);
+            }
+          }
+        } else {
+          if (sheetName.toLowerCase().startsWith(text.split(" ")[0]) && sheetName.toLowerCase().split(" ")[1] == text.split(" ")[1]) {
+            Logger.log(sheetR.getName() + " = " + text);
+            var tosearch = "Grand Total";
+            var tf = sheetR.createTextFinder(tosearch);
+            var cell = tf.findNext();
+            if (cell == null) {
+              Logger.log("cell == null ??");
+              total = sheetsF.setCurrentCell(sheetsF.getRange('Y3')).getValue();
+            } else {
+              cell = cell.offset(0, 1);
+              if (cell.getBackground() == '#ff0000') {
+                total = cell.getValue();
+              } else {
+                while (cell.getBackground() != '#92d050') {
+                  cell = cell.offset(1, 0);
+                }
+              }
+            }
+            total = cell.getValue();
+            if (text.split(" ")[1] != "harmon") {
+              Logger.log(text + " " + total);
+              var col = sheetsF.createTextFinder(day).findNext().getColumn();
+              var row = sheetsF.createTextFinder(textO).findNext().getRow();
+              var curr = sheetsF.setCurrentCell(sheetsF.getRange(row, col));
+              curr.setValue(total);
+            }
+          }
+        }
       }
     }
-    Logger.log(sheetR.getName());
   }
 }
 
-function getWeekDayName(exampleDate) {
+
+function getWeekDayName(date) {
   // get current date
-  var exampleDate = new Date();
+  var exampleDate = new Date(date);
   Logger.log('date is: ' + exampleDate);
   // get the weekday number from the current date
   var dayOfWeek = exampleDate.getDay();
