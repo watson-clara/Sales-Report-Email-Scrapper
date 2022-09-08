@@ -149,18 +149,18 @@ function putDataDealDesk(sheetR, sheetName, sheetsF, text, textO, total, day) {
       var row = c.getRow();
       Logger.log(row);
 
-     
+
       Logger.log(sheetR.getName() + " = " + text);
       var cell = sheetR.setCurrentCell(sheetR.getRange(row, 5));
 
       total = 0;
       while (!cell.isBlank()) {
-        if (cell.getBackground() != '#92d050'){
+        if (cell.getBackground() != '#92d050') {
           total = total + cell.getValue();
         }
         Logger.log("while " + cell.getRow());
         cell = cell.offset(1, 0);
-        
+
       }
       Logger.log(text + " " + total);
       // gets the colum of the day of the week we are finding 
@@ -178,7 +178,7 @@ function putDataDealDesk(sheetR, sheetName, sheetsF, text, textO, total, day) {
 
 function putDataDialers(sheetR, sheetName, sheetsF, text, textO, total, day) {
   if (sheetName.toLowerCase().startsWith(text.split(" ")[0]) && sheetName.toLowerCase().split(" ")[1] == text.split(" ")[1]) {
-    if (sheetName != "Mike Andrews") {
+    if (sheetName != "Mike Andrews" && sheetName != "Joseph Sanchez") {
       Logger.log("DIALERS");
       Logger.log(sheetName);
       Logger.log(text);
@@ -260,7 +260,7 @@ function getWeekDayName(date) {
   var dayOfWeek = exampleDate.getDay();
   Logger.log('weekday number is: ' + dayOfWeek);
   // use a 'switch' statement to calculate the weekday name from the weekday number
-  switch (5) {
+  switch (3) {
     case 0:
       day = "Sunday";
       break;
@@ -313,4 +313,37 @@ function getPaulsReportFromEmail() {
   });
   return name;
 }
+
+
+function getQCallsFromEmail() {
+  // gets the folder for storing pauls spreadsheet with the raw data
+  var folder = DriveApp.getFolderById('1qA2gJireVE7FgVzNtEdaFXFOeChJHxXI');
+  // searches for emails that meet the query and creates a list
+  var query = 'from:"analytics.portal@ringcentral.com" is:unread';
+  var results = Gmail.Users.Messages.list("me", { q: query });
+  // loops through the list of emails
+  results.messages.forEach(function (m) {
+    // gets the id of each email
+    var msg = GmailApp.getMessageById(m.id);
+    Logger.log(m.id);
+    // gets the attachement for each eamil
+    var a = msg.getAttachments();
+    // gets name of attachement 
+    var fileName = a.getName();
+    fileName = fileName.split(" ")[0];
+    // copies the data from the attachement and creates a new file and puts the data in it and renames it 
+    var file = folder.createFile(a.copyBlob()).setName(fileName);
+    //msg.markMessageRead();
+    // gets the name of the new file made becasue returning fileName was giving an error
+    name = file.getName();
+
+ });
+}
+
+
+
+
+
+
+
 
